@@ -29,6 +29,14 @@ app.get('/BuscarClientes', (request, response) => {
         .catch(err => console.log(err))
  });
 
+ app.delete('/DeletarCliente/:id', (request, response) => {
+    const id = request.params.id;
+    const result = db.DeletarCliente(id);
+    result
+        .then(data=> response.json(data))
+        .catch(err => console.log(err))
+ });
+
 
 
 

@@ -11,14 +11,13 @@ import {
 import Api from "../Api.jsx";
 
 const Clientes = () => {
-
   useEffect(() => {
     const getClientes = async () => {
       const responseClientes = await Api.get("/buscarClientes");
       setClientes(responseClientes.data);
     };
     getClientes();
-  },[]);
+  }, []);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -35,22 +34,44 @@ const Clientes = () => {
     setShowModal(false);
   };
 
+  const handleDeleteClient = async (id) => {
+    console.log("Deletando cliente com o id: ", id);
+  
+    try {
+      const response = await Api.delete(`DeletarCliente/${id}`);
+  
+      if (response.status === 200) {
+        setClientes((prevClientes) =>
+          prevClientes.filter((cliente) => cliente.id !== id)
+        );
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  
+
   const handleSave = async (e) => {
     e.preventDefault();
+
+    if (
+      newClientesName == null ||
+      newClientesName == undefined ||
+      newClientesName == ""
+    ) {
+      alert("nome nao pode ser nulo!");
+      return;
+    }
     const newCliente = {
       id: clientes.length + 1,
       nome: newClientesName,
       email: newClientesEmail,
     };
 
-  await Api.post(
-      "/NovoCliente",
-      JSON.stringify(newCliente),
-      {
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-   setClientes([...clientes, newCliente])
+    await Api.post("/NovoCliente", JSON.stringify(newCliente), {
+      headers: { "Content-Type": "application/json" },
+    });
+    setClientes([...clientes, newCliente]);
 
     handleClose();
 
@@ -101,6 +122,7 @@ const Clientes = () => {
             <th>#</th>
             <th>Nome</th>
             <th>Email</th>
+            <th>Acoes</th>
           </tr>
         </thead>
         <tbody>
@@ -109,6 +131,13 @@ const Clientes = () => {
               <td>{client.id}</td>
               <td>{client.nome}</td>
               <td>{client.email}</td>
+              <td>
+                <Button
+                  onClick={() => {
+                    handleDeleteClient(client.id);
+                  }}
+                ></Button>
+              </td>
             </tr>
           ))}
         </tbody>

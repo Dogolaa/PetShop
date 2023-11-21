@@ -42,25 +42,43 @@ class dbServices {
   }
 
   async NovoCliente(data) {
-    try{
-    const query = "INSERT INTO tbl_clientes (nome,email) VALUES (?,?)";
-    const nome = data.nome;
-    const email = data.email;
+    try {
+      const query = "INSERT INTO tbl_clientes (nome,email) VALUES (?,?)";
+      const nome = data.nome;
+      const email = data.email;
 
-    const response = await new Promise((resolve, reject) => {
-      connection.query(query, [nome, email], (err, result) => {
-        if (err) reject(new Error(err.message));
-        resolve(result);
+      const response = await new Promise((resolve, reject) => {
+        connection.query(query, [nome, email], (err, result) => {
+          if (err) reject(new Error(err.message));
+          resolve(result);
+        });
       });
-    });
-    console.log("Cliente inserido com sucesso")
-    return response;
-
-    }catch(error){
+      console.log("Cliente inserido com sucesso");
+      return response;
+    } catch (error) {
       console.log("Erro ao inserir cliente :" + error);
       throw error;
     }
-    
+  }
+
+  async DeletarCliente(id) {
+    const query = `DELETE FROM tbl_clientes WHERE id = ?;`;
+    try {
+      const response = await new Promise((resolve, reject) => {
+        connection.query(query, id, (err, result) => {
+          if (err) reject(new Error(err.message));
+          resolve(result);
+        });
+      });
+
+      if (response.affectedRows == 0) {
+        throw new Error("Cliente nao encontrado");
+      }
+      console.log("Cliente foi deletado com sucessos");
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   }
 }
 
