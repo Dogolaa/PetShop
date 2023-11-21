@@ -22,6 +22,16 @@ app.get('/BuscarClientes', (request, response) => {
         .catch(err => console.log(err))
  });
 
+ app.post('/NovoCliente', (request, response) => {
+    const result = db.NovoCliente(request.body);
+    result
+        .then(data=> response.json(data))
+        .catch(err => console.log(err))
+ });
+
+
+
+
 
 app.get('/teste', (request, response) => {
     response.send("EndPoint de teste!")

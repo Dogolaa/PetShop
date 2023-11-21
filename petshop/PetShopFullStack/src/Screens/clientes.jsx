@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Button,
@@ -8,15 +8,21 @@ import {
   ModalBody,
   FormGroup,
 } from "react-bootstrap";
+import Api from "../Api.jsx";
 
 const Clientes = () => {
+
+  useEffect(() => {
+    const getClientes = async () => {
+      const responseClientes = await Api.get("/buscarClientes");
+      setClientes(responseClientes.data);
+    };
+    getClientes();
+  },[]);
+
   const [showModal, setShowModal] = useState(false);
 
-  const [clientes, setClientes] = useState([
-    { id: 1, name: "Nome 1", email: "Nevisu@gmail.com" },
-    { id: 2, name: "Nome 2", email: "dromedario@gmail.com" },
-    { id: 3, name: "Nome 3", email: "lesbico@gmail.com" },
-  ]);
+  const [clientes, setClientes] = useState([]);
 
   const [newClientesName, setNewClienteName] = useState("");
   const [newClientesEmail, setNewClienteEmail] = useState("");
@@ -29,18 +35,27 @@ const Clientes = () => {
     setShowModal(false);
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     const newCliente = {
-      id: clientes.lenght + 1,
-      name: newClientesName,
+      id: clientes.length + 1,
+      nome: newClientesName,
       email: newClientesEmail,
     };
-    setClientes([...clientes, newCliente])
+
+  await Api.post(
+      "/NovoCliente",
+      JSON.stringify(newCliente),
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+   setClientes([...clientes, newCliente])
+
     handleClose();
 
-    setNewClienteEmail('')
-    setNewClienteName('')
+    setNewClienteEmail("");
+    setNewClienteName("");
   };
 
   return (
@@ -73,39 +88,31 @@ const Clientes = () => {
                 onChange={(e) => setNewClienteEmail(e.target.value)}
               />
             </FormGroup>
-            <Button variant="primary" type = 'submit'>
-                Salvar
+            <Button variant="primary" type="submit">
+              Salvar
             </Button>
           </Form>
         </Modal.Body>
       </Modal>
 
-<Table striped bordered hover>
-
-<thead>
-    <tr>
-        <th>#</th>
-        <th>Nome</th>
-        <th>Email</th>
-    </tr>
-</thead>
-<tbody>
-    {clientes.map((client) =>(
-        <tr key ={client.id}>
-            <td>{client.id}</td>
-            <td>{client.name}</td>
-            <td>{client.email}</td>
-        </tr>
-    ))}
-</tbody>
-</Table>
-
-
-
-
-
-
-
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nome</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          {clientes.map((client) => (
+            <tr key={client.id}>
+              <td>{client.id}</td>
+              <td>{client.nome}</td>
+              <td>{client.email}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
     </Container>
   );
 };

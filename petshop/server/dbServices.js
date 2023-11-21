@@ -40,6 +40,28 @@ class dbServices {
       });
     });
   }
+
+  async NovoCliente(data) {
+    try{
+    const query = "INSERT INTO tbl_clientes (nome,email) VALUES (?,?)";
+    const nome = data.nome;
+    const email = data.email;
+
+    const response = await new Promise((resolve, reject) => {
+      connection.query(query, [nome, email], (err, result) => {
+        if (err) reject(new Error(err.message));
+        resolve(result);
+      });
+    });
+    console.log("Cliente inserido com sucesso")
+    return response;
+
+    }catch(error){
+      console.log("Erro ao inserir cliente :" + error);
+      throw error;
+    }
+    
+  }
 }
 
 module.exports = dbServices;
