@@ -27,7 +27,6 @@ const Servicos = () => {
 
   const [newServiceName, setnewServiceName] = useState("");
   const [NewServicePreco, setNewServicePreco] = useState("");
-  const [NewServiceEstoque, setNewServiceEstoque] = useState("");
 
   const handleModal = () => {
     setShowModal(true);
@@ -37,7 +36,7 @@ const Servicos = () => {
     setShowModal(false);
   };
 
-  const handleDeleteProduct = async (id) => {
+  const handleDeleteService = async (id) => {
     console.log("Deletando servico com o id: ", id);
 
     try {
@@ -67,7 +66,6 @@ const Servicos = () => {
     const newService = {
       nome: newServiceName,
       preco: NewServicePreco,
-      estoque: NewServiceEstoque
     };
 
     const response = await Api.post(
@@ -82,7 +80,7 @@ const Servicos = () => {
 
     setServicos([
       ...servicos,
-      { id: response.data.insertId, nome: newServiceName,preco: NewServicePreco, estoque: NewServiceEstoque },
+      { id: response.data.insertId, nome: newServiceName,preco: NewServicePreco},
     ]);
 
     handleClose();
@@ -122,14 +120,6 @@ const Servicos = () => {
               />
             </Form.Group>
 
-            <Form.Group controlId="formBasicEstoque">
-              <Form.Label>Estoque</Form.Label>
-              <Form.Control
-                type="number"
-                placeholder="Digite o Estoque inical do Servico"
-                onChange={(e) => setNewServiceEstoque(e.target.value)}
-              />
-            </Form.Group>
 
             <Button variant="primary" type="submit">
               Salvar
@@ -144,7 +134,6 @@ const Servicos = () => {
             <th>#</th>
             <th>Nome</th>
             <th>Preco</th>
-            <th>Estoque</th>
             <th>Acoes</th>
           </tr>
         </thead>
@@ -154,12 +143,12 @@ const Servicos = () => {
               <td>{service.id}</td>
               <td>{service.nome}</td>
               <td>{service.preco}</td>
-              <td>{service.estoque}</td>
+              
 
               <td>
                 <Button
                   onClick={() => {
-                    handleDeleteProduct(service.id);
+                    handleDeleteService(service.id);
                   }}
                 >
                   <BsTrash />

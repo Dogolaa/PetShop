@@ -152,13 +152,13 @@ class dbServices {
   async NovoServico(data) {
     try {
       const query =
-        "INSERT INTO tbl_servicos (nome,estoque,preco) VALUES (?,?,?)";
+        "INSERT INTO tbl_servicos (nome,preco) VALUES (?,?)";
       const nome = data.nome;
       const preco = data.preco;
-      const estoque = data.estoque;
+  
 
       const response = await new Promise((resolve, reject) => {
-        connection.query(query, [nome, preco, estoque], (err, result) => {
+        connection.query(query, [nome, preco], (err, result) => {
           if (err) reject(new Error(err.message));
           resolve(result);
         });
