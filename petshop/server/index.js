@@ -41,6 +41,54 @@ app.get('/BuscarClientes', (request, response) => {
 
 
 
+ app.get('/BuscarProdutos', (request, response) => {
+    const result = db.BuscarProdutos();
+    result
+        .then(data=> response.json(data))
+        .catch(err => console.log(err))
+ });
+
+ app.post('/NovoProduto', (request, response) => {
+    const result = db.NovoProduto(request.body);
+    result
+        .then(data=> response.json(data))
+        .catch(err => console.log(err))
+ });
+
+ app.delete('/DeletarProduto/:id', (request, response) => {
+    const id = request.params.id;
+    const result = db.DeletarProduto(id);
+    result
+        .then(data=> response.json(data))
+        .catch(err => console.log(err))
+ });
+
+
+
+ app.get('/BuscarServicos', (request, response) => {
+    const result = db.BuscarServicos();
+    result
+        .then(data=> response.json(data))
+        .catch(err => console.log(err))
+ });
+
+ app.post('/NovoServico', (request, response) => {
+    const result = db.NovoServico(request.body);
+    result
+        .then(data=> response.json(data))
+        .catch(err => console.log(err))
+ });
+
+ app.delete('/DeletarServico/:id', (request, response) => {
+    const id = request.params.id;
+    const result = db.DeletarServico(id);
+    result
+        .then(data=> response.json(data))
+        .catch(err => console.log(err))
+ });
+
+
+
 app.get('/teste', (request, response) => {
     response.send("EndPoint de teste!")
  });

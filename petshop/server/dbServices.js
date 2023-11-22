@@ -80,6 +80,122 @@ class dbServices {
       throw err;
     }
   }
+
+  async BuscarProdutos() {
+    return new Promise((resolve, reject) => {
+      const query = "SELECT * FROM tbl_produtos";
+      connection.query(query, (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+  }
+
+  async NovoProduto(data) {
+    try {
+      const query =
+        "INSERT INTO tbl_produtos (nome,estoque,preco) VALUES (?,?,?)";
+      const nome = data.nome;
+      const preco = data.preco;
+      const estoque = data.estoque;
+
+      const response = await new Promise((resolve, reject) => {
+        connection.query(query, [nome, preco, estoque], (err, result) => {
+          if (err) reject(new Error(err.message));
+          resolve(result);
+        });
+      });
+      console.log("Produto inserido com sucesso");
+      return response;
+    } catch (error) {
+      console.log("Erro ao inserir produto :" + error);
+      throw error;
+    }
+  }
+
+  async DeletarProduto(id) {
+    const query = `DELETE FROM tbl_produtos WHERE id = ?;`;
+    try {
+      const response = await new Promise((resolve, reject) => {
+        connection.query(query, id, (err, result) => {
+          if (err) reject(new Error(err.message));
+          resolve(result);
+        });
+      });
+
+      if (response.affectedRows == 0) {
+        throw new Error("Produto nao encontrado");
+      }
+      console.log("Produto foi deletado com sucessos");
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  }
+
+  async BuscarServicos() {
+    return new Promise((resolve, reject) => {
+      const query = "SELECT * FROM tbl_servicos";
+      connection.query(query, (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+  }
+
+  async NovoServico(data) {
+    try {
+      const query =
+        "INSERT INTO tbl_servicos (nome,estoque,preco) VALUES (?,?,?)";
+      const nome = data.nome;
+      const preco = data.preco;
+      const estoque = data.estoque;
+
+      const response = await new Promise((resolve, reject) => {
+        connection.query(query, [nome, preco, estoque], (err, result) => {
+          if (err) reject(new Error(err.message));
+          resolve(result);
+        });
+      });
+      console.log("Servico inserido com sucesso");
+      return response;
+    } catch (error) {
+      console.log("Erro ao inserir servico :" + error);
+      throw error;
+    }
+  }
+
+  async DeletarServico(id) {
+    const query = `DELETE FROM tbl_servicos WHERE id = ?;`;
+    try {
+      const response = await new Promise((resolve, reject) => {
+        connection.query(query, id, (err, result) => {
+          if (err) reject(new Error(err.message));
+          resolve(result);
+        });
+      });
+
+      if (response.affectedRows == 0) {
+        throw new Error("Servico nao encontrado");
+      }
+      console.log("Servico foi deletado com sucesso");
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  }
+
+
+
+
+
+
 }
 
 module.exports = dbServices;

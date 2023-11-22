@@ -9,6 +9,8 @@ import {
   FormGroup,
 } from "react-bootstrap";
 import Api from "../Api.jsx";
+import { BsTrash } from "react-icons/bs";
+import Header from "../Components/header.jsx";
 
 const Clientes = () => {
   useEffect(() => {
@@ -36,10 +38,10 @@ const Clientes = () => {
 
   const handleDeleteClient = async (id) => {
     console.log("Deletando cliente com o id: ", id);
-  
+
     try {
       const response = await Api.delete(`DeletarCliente/${id}`);
-  
+
       if (response.status === 200) {
         setClientes((prevClientes) =>
           prevClientes.filter((cliente) => cliente.id !== id)
@@ -49,7 +51,6 @@ const Clientes = () => {
       console.log(err);
     }
   };
-  
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -63,15 +64,17 @@ const Clientes = () => {
       return;
     }
     const newCliente = {
-      id: clientes.length + 1,
       nome: newClientesName,
       email: newClientesEmail,
     };
 
-    await Api.post("/NovoCliente", JSON.stringify(newCliente), {
+   const response = await Api.post("/NovoCliente", JSON.stringify(newCliente), {
       headers: { "Content-Type": "application/json" },
     });
-    setClientes([...clientes, newCliente]);
+
+    console.log(response.data.insertId)
+    
+    setClientes([...clientes, {id: response.data.insertId ,nome : newClientesName,email: newClientesEmail }]);
 
     handleClose();
 
@@ -80,7 +83,8 @@ const Clientes = () => {
   };
 
   return (
-    <Container>
+    <Container style ={{marginTop: 20}}>
+      <Header />
       <h1>Lista de Clientes</h1>
 
       <Button variant="primary" onClick={handleModal}>
@@ -136,7 +140,9 @@ const Clientes = () => {
                   onClick={() => {
                     handleDeleteClient(client.id);
                   }}
-                ></Button>
+                >
+                  <BsTrash />
+                </Button>
               </td>
             </tr>
           ))}
