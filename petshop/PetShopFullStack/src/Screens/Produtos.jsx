@@ -117,7 +117,7 @@ const Produtos = () => {
               <Form.Label>Preco</Form.Label>
               <Form.Control
                 type="Text"
-                placeholder="Digite o Preco do Produto"
+                placeholder="Digite o Preco do Produto!"
                 onChange={(e) => setNewProdutoPreco(e.target.value)}
               />
             </Form.Group>
