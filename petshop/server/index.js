@@ -110,6 +110,40 @@ app.get('/BuscarClientes', (request, response) => {
  });
 
 
+ app.get('/BuscarVendas', (request, response) => {
+    const result = db.BuscarVendas();
+    result
+        .then(data=> response.json(data))
+        .catch(err => console.log(err))
+ });
+
+ app.post('/NovaVenda', (request, response) => {
+    const result = db.NovaVenda(request.body);
+    result
+        .then(data=> response.json(data))
+        .catch(err => console.log(err))
+ });
+
+
+ app.delete('/DeletarVenda/:id', (request, response) => {
+    const id = request.params.id;
+    const result = db.DeletarVenda(id);
+    result
+        .then(data=> response.json(data))
+        .catch(err => console.log(err))
+ });
+
+
+ app.get('/infohome',(request, response) => {
+    const result = db.buscarInformacoesVendas();
+    result
+        .then(data=> response.json(data))
+        .catch(err => console.log(err))
+  });
+
+
+
+
 app.get('/teste', (request, response) => {
     response.send("EndPoint de teste!")
  });

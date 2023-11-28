@@ -6,7 +6,7 @@ function Header() {
     <>
       <Navbar bg="light" expand="lg" fixed="top">
         <Container>
-          <Navbar.Brand href="/">Titulo </Navbar.Brand>
+          <Navbar.Brand href="/">PetShop Mari</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse
             id="basic-navbar-nav"
@@ -14,6 +14,7 @@ function Header() {
           >
             <Nav>
               <Nav.Link href="/home">Pagina Inicial</Nav.Link>
+              <Nav.Link href="/vendas">Vendas</Nav.Link>
 
               <NavDropdown title="Cadastros" id="basic-nav-dropdown">
                 <NavDropdown.Item href="/produtos">Produtos</NavDropdown.Item>

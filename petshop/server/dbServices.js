@@ -234,93 +234,235 @@ class dbServices {
       console.log(err);
       throw err;
     }
-}
-
-
-async EditarCliente(data) {
-  let query = "UPDATE tbl_clientes SET ";
-  const values = [];
-  let isFirstSet = true;
-
-  if (data.nome != null || data.nome != undefined) {
-    query += `nome = ?`;
-    values.push(data.nome);
-    isFirstSet = false;
   }
-  if (data.email != null || data.email != undefined) {
-    if (!isFirstSet) {
-      query += ",";
+
+  async EditarCliente(data) {
+    let query = "UPDATE tbl_clientes SET ";
+    const values = [];
+    let isFirstSet = true;
+
+    if (data.nome != null || data.nome != undefined) {
+      query += `nome = ?`;
+      values.push(data.nome);
+      isFirstSet = false;
     }
-    query += `email = ?`;
-    values.push(data.email);
+    if (data.email != null || data.email != undefined) {
+      if (!isFirstSet) {
+        query += ",";
+      }
+      query += `email = ?`;
+      values.push(data.email);
+    }
+
+    query += ` WHERE id = ?`;
+    values.push(data.id);
+
+    try {
+      const response = await new Promise((resolve, reject) => {
+        connection.query(query, values, (err, result) => {
+          if (err) reject(new Error(err.message));
+          resolve(result);
+        });
+      });
+
+      if (response.affectedRows == 0) {
+        throw new Error("Cliente nao encontrado");
+      }
+      console.log("Cliente foi editado com sucesso");
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   }
 
-  query += ` WHERE id = ?`;
-  values.push(data.id);
+  async EditarServico(data) {
+    let query = "UPDATE tbl_servicos SET ";
+    const values = [];
+    let isFirstSet = true;
 
-  try {
-    const response = await new Promise((resolve, reject) => {
-      connection.query(query, values, (err, result) => {
-        if (err) reject(new Error(err.message));
-        resolve(result);
+    if (data.nome != null || data.nome != undefined) {
+      query += `nome = ?`;
+      values.push(data.nome);
+      isFirstSet = false;
+    }
+    if (data.preco != null || data.preco != undefined) {
+      if (!isFirstSet) {
+        query += ",";
+      }
+      query += `preco = ?`;
+      values.push(data.preco);
+    }
+
+    query += ` WHERE id = ?`;
+    values.push(data.id);
+
+    try {
+      const response = await new Promise((resolve, reject) => {
+        connection.query(query, values, (err, result) => {
+          if (err) reject(new Error(err.message));
+          resolve(result);
+        });
+      });
+
+      if (response.affectedRows == 0) {
+        throw new Error("Servico nao encontrado");
+      }
+      console.log("Servico foi editado com sucesso");
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  }
+
+  async BuscarVendas() {
+    return new Promise((resolve, reject) => {
+      const query = "SELECT * FROM tbl_vendas";
+      connection.query(query, (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
       });
     });
+  }
 
-    if (response.affectedRows == 0) {
-      throw new Error("Cliente nao encontrado");
+  async NovaVenda(data) {
+    try {
+      const query =
+        "INSERT INTO tbl_vendas (id_cliente,id_produto,id_servico) VALUES (?,?,?)";
+
+      const { cliente, produtos, servicos } = data;
+
+      const produtosString = produtos.join(", ");
+      const servicosString = servicos.join(", ");
+
+      const response = await new Promise((resolve, reject) => {
+        connection.query(
+          query,
+          [cliente, produtosString, servicosString],
+          (err, result) => {
+            if (err) reject(new Error(err.message));
+            resolve(result);
+          }
+        );
+      });
+      console.log("Cliente inserido com sucesso");
+      return response;
+    } catch (error) {
+      console.log("Erro ao inserir cliente :" + error);
+      throw error;
     }
-    console.log("Cliente foi editado com sucesso");
-  } catch (err) {
-    console.log(err);
-    throw err;
   }
-}
 
+  async DeletarVenda(id) {
+    const query = `DELETE FROM tbl_vendas WHERE id = ?;`;
+    try {
+      const response = await new Promise((resolve, reject) => {
+        connection.query(query, id, (err, result) => {
+          if (err) reject(new Error(err.message));
+          resolve(result);
+        });
+      });
 
-
-
-
-async EditarServico(data) {
-  let query = "UPDATE tbl_servicos SET ";
-  const values = [];
-  let isFirstSet = true;
-
-  if (data.nome != null || data.nome != undefined) {
-    query += `nome = ?`;
-    values.push(data.nome);
-    isFirstSet = false;
-  }
-  if (data.preco != null || data.preco != undefined) {
-    if (!isFirstSet) {
-      query += ",";
+      if (response.affectedRows == 0) {
+        throw new Error("Venda nao encontrada");
+      }
+      console.log("Venda foi deletada com sucesso");
+    } catch (err) {
+      console.log(err);
+      throw err;
     }
-    query += `preco = ?`;
-    values.push(data.preco);
   }
 
-  query += ` WHERE id = ?`;
-  values.push(data.id);
-
-  try {
-    const response = await new Promise((resolve, reject) => {
-      connection.query(query, values, (err, result) => {
-        if (err) reject(new Error(err.message));
-        resolve(result);
+  queryAsync(query) {
+    return new Promise((resolve, reject) => {
+      connection.query(query, (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
       });
     });
-
-    if (response.affectedRows == 0) {
-      throw new Error("Servico nao encontrado");
-    }
-    console.log("Servico foi editado com sucesso");
-  } catch (err) {
-    console.log(err);
-    throw err;
   }
-}
 
+  
 
+  async buscarInformacoesVendas() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const queryProdutos = "SELECT * FROM tbl_produtos";
+        const produtos = await this.queryAsync(queryProdutos);
 
+        const queryServicos = "SELECT * FROM tbl_servicos";
+        const servicos = await this.queryAsync(queryServicos);
+
+        const queryProdutosVendidos = "SELECT id_produto FROM tbl_vendas;";
+        const idsProdutos = await this.queryAsync(queryProdutosVendidos);
+
+        const queryServicosVendidos = "SELECT id_servico FROM tbl_vendas;";
+        const idsServicos = await this.queryAsync(queryServicosVendidos);
+
+        const calcularFaturamentoProdutos = (ids, lista) => {
+          let totalFaturamento = 0;
+
+          ids.forEach((idString) => {
+            const idArray = idString.id_produto
+              .split(",")
+              .map((id) => id.trim());
+
+            idArray.forEach((id) => {
+              const produto = lista.find((item) => item.id == id);
+
+              if (produto) {
+                totalFaturamento += parseFloat(produto.preco);
+              }
+            });
+          });
+
+          return totalFaturamento;
+        };
+
+        const calcularFaturamentoServicos = (ids, lista) => {
+          let totalFaturamento = 0;
+
+          ids.forEach((idString) => {
+            const idArray = idString.id_servico
+              .split(",")
+              .map((id) => id.trim());
+
+            idArray.forEach((id) => {
+              const servico = lista.find((item) => item.id == id);
+
+              if (servico) {
+                totalFaturamento += parseFloat(servico.preco);
+              }
+            });
+          });
+
+          return totalFaturamento;
+        };
+
+        const faturamentoProdutos = calcularFaturamentoProdutos(
+          idsProdutos,
+          produtos
+        );
+        const faturamentoServicos = calcularFaturamentoServicos(
+          idsServicos,
+          servicos
+        );
+
+        const resultadoFinal = {
+          valorProdutos: faturamentoProdutos,
+          valorServicos: faturamentoServicos,
+        };
+        resolve(resultadoFinal);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
 
 
 
