@@ -11,6 +11,7 @@ import {
 import Api from "../Api.jsx";
 import { BsTrash } from "react-icons/bs";
 import Header from "../Components/header.jsx";
+import { AiOutlineEdit } from "react-icons/ai";
 
 const Clientes = () => {
   useEffect(() => {
@@ -23,17 +24,31 @@ const Clientes = () => {
 
   const [showModal, setShowModal] = useState(false);
 
+  const [showModalEdit, setShowModalEdit] = useState(false);
+
   const [clientes, setClientes] = useState([]);
 
   const [newClientesName, setNewClienteName] = useState("");
   const [newClientesEmail, setNewClienteEmail] = useState("");
+  const [Editdata, setEditData] = useState([]);
 
   const handleModal = () => {
     setShowModal(true);
   };
 
+  const handleModalEdit = () => {
+    setShowModalEdit(true);
+  };
+
   const handleClose = () => {
     setShowModal(false);
+    setNewClienteName("");
+    setNewClienteEmail("");
+  };
+
+  const handleCloseEdit = () => {
+    setEditData({});
+    setShowModalEdit(false);
   };
 
   const handleDeleteClient = async (id) => {
@@ -51,6 +66,16 @@ const Clientes = () => {
       console.log(err);
     }
   };
+
+  const handleEditClient = async (id) => {
+    handleModalEdit();
+    console.log("Editando cliente: ", Editdata);
+  };
+
+
+
+
+
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -81,6 +106,67 @@ const Clientes = () => {
     setNewClienteEmail("");
     setNewClienteName("");
   };
+
+
+  const handleEdit = async (e) => {
+    e.preventDefault();
+
+    if (
+      newClientesName == null ||
+      newClientesName == undefined ||
+      newClientesName == ""
+    ) {
+      alert("nome nao pode ser nulo!");
+      return;
+    }
+    const EditedClient = {};
+    EditedClient.id = Editdata.id;
+
+   
+      EditedClient.nome = newClientesName;
+    
+
+   
+      EditedClient.email = newClientesEmail;
+    
+
+  
+    
+
+    const response = await Api.put(
+     "/EditarCliente",
+     JSON.stringify(EditedClient),
+     {
+       headers: { "Content-Type": "application/json" },
+      }
+    );
+
+    setClientes((cliente) => {
+      return clientes.map((cliente) => {
+        if (cliente.id === Editdata.id) {
+          return {
+            ...cliente,
+            nome: newClientesName,
+            email: newClientesEmail,
+
+          };
+        }
+        return cliente;
+      });
+    });
+
+    handleCloseEdit();
+
+    setNewClienteName("");
+    setNewClienteEmail("");
+  };
+
+
+
+
+
+
+
 
   return (
     <Container style ={{marginTop: 20}}>
@@ -119,6 +205,37 @@ const Clientes = () => {
           </Form>
         </Modal.Body>
       </Modal>
+      <Modal show={showModalEdit} onHide={handleCloseEdit}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edicao de Cliente</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleEdit}>
+            <Form.Group controlId="formBasicName">
+              <Form.Label>Nome</Form.Label>
+              <Form.Control
+                type="Text"
+                onChange={(e) => setNewClienteName(e.target.value)}
+                defaultValue={Editdata.nome}
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formBasicPreco">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="Text"
+                onChange={(e) => setNewClienteEmail(e.target.value)}
+                defaultValue={Editdata.email}
+              />
+            </Form.Group>
+
+
+            <Button variant="primary" type="submit">
+              Salvar
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
 
       <Table striped bordered hover>
         <thead>
@@ -139,9 +256,20 @@ const Clientes = () => {
                 <Button
                   onClick={() => {
                     handleDeleteClient(client.id);
-                  }}
+                  }}style={{marginRight: 10}}
                 >
                   <BsTrash />
+                </Button>
+                <Button
+                  onClick={() => {
+                    setEditData(client),
+                      handleEditClient(client.id),
+                      setNewClienteName(client.nome),
+                      setNewClienteEmail(client.email);
+                      
+                  }}
+                >
+                  <AiOutlineEdit />
                 </Button>
               </td>
             </tr>

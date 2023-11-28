@@ -88,6 +88,27 @@ app.get('/BuscarClientes', (request, response) => {
  });
 
 
+ app.put('/EditarProduto', (request, response) => {
+    const result = db.EditarProduto(request.body);
+    result
+        .then(data=> response.json(data))
+        .catch(err => console.log(err))
+ });
+
+ app.put('/EditarCliente', (request, response) => {
+    const result = db.EditarCliente(request.body);
+    result
+        .then(data=> response.json(data))
+        .catch(err => console.log(err))
+ });
+
+ app.put('/EditarServico', (request, response) => {
+    const result = db.EditarServico(request.body);
+    result
+        .then(data=> response.json(data))
+        .catch(err => console.log(err))
+ });
+
 
 app.get('/teste', (request, response) => {
     response.send("EndPoint de teste!")

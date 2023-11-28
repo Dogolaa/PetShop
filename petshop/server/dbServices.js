@@ -151,11 +151,9 @@ class dbServices {
 
   async NovoServico(data) {
     try {
-      const query =
-        "INSERT INTO tbl_servicos (nome,preco) VALUES (?,?)";
+      const query = "INSERT INTO tbl_servicos (nome,preco) VALUES (?,?)";
       const nome = data.nome;
       const preco = data.preco;
-  
 
       const response = await new Promise((resolve, reject) => {
         connection.query(query, [nome, preco], (err, result) => {
@@ -190,6 +188,137 @@ class dbServices {
       throw err;
     }
   }
+
+  async EditarProduto(data) {
+    let query = "UPDATE tbl_produtos SET ";
+    const values = [];
+    let isFirstSet = true;
+
+    if (data.nome != null || data.nome != undefined) {
+      query += `nome = ?`;
+      values.push(data.nome);
+      isFirstSet = false;
+    }
+    if (data.preco != null || data.preco != undefined) {
+      if (!isFirstSet) {
+        query += ",";
+      }
+      query += `preco = ?`;
+      values.push(data.preco);
+      isFirstSet = false;
+    }
+    if (data.estoque != null || data.estoque != undefined) {
+      if (!isFirstSet) {
+        query += ",";
+      }
+      query += `estoque = ?`;
+      values.push(data.estoque);
+    }
+
+    query += ` WHERE id = ?`;
+    values.push(data.id);
+
+    try {
+      const response = await new Promise((resolve, reject) => {
+        connection.query(query, values, (err, result) => {
+          if (err) reject(new Error(err.message));
+          resolve(result);
+        });
+      });
+
+      if (response.affectedRows == 0) {
+        throw new Error("Produto nao encontrado");
+      }
+      console.log("Produto foi editado com sucesso");
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+}
+
+
+async EditarCliente(data) {
+  let query = "UPDATE tbl_clientes SET ";
+  const values = [];
+  let isFirstSet = true;
+
+  if (data.nome != null || data.nome != undefined) {
+    query += `nome = ?`;
+    values.push(data.nome);
+    isFirstSet = false;
+  }
+  if (data.email != null || data.email != undefined) {
+    if (!isFirstSet) {
+      query += ",";
+    }
+    query += `email = ?`;
+    values.push(data.email);
+  }
+
+  query += ` WHERE id = ?`;
+  values.push(data.id);
+
+  try {
+    const response = await new Promise((resolve, reject) => {
+      connection.query(query, values, (err, result) => {
+        if (err) reject(new Error(err.message));
+        resolve(result);
+      });
+    });
+
+    if (response.affectedRows == 0) {
+      throw new Error("Cliente nao encontrado");
+    }
+    console.log("Cliente foi editado com sucesso");
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+}
+
+
+
+
+
+async EditarServico(data) {
+  let query = "UPDATE tbl_servicos SET ";
+  const values = [];
+  let isFirstSet = true;
+
+  if (data.nome != null || data.nome != undefined) {
+    query += `nome = ?`;
+    values.push(data.nome);
+    isFirstSet = false;
+  }
+  if (data.preco != null || data.preco != undefined) {
+    if (!isFirstSet) {
+      query += ",";
+    }
+    query += `preco = ?`;
+    values.push(data.preco);
+  }
+
+  query += ` WHERE id = ?`;
+  values.push(data.id);
+
+  try {
+    const response = await new Promise((resolve, reject) => {
+      connection.query(query, values, (err, result) => {
+        if (err) reject(new Error(err.message));
+        resolve(result);
+      });
+    });
+
+    if (response.affectedRows == 0) {
+      throw new Error("Servico nao encontrado");
+    }
+    console.log("Servico foi editado com sucesso");
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+}
+
 
 
 
